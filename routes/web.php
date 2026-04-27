@@ -1,27 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('dashboard');
-});
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\LaporanController;
 
 Route::get('/admin', function () {
     return view('admin');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-});
+Route::get('/dashboard', [DashboardController::class, 'index']);
 
-Route::get('/produk', function () {
-    return view('produk');
-});
+Route::get('/produk', [ProdukController::class, 'index']);
 
-Route::get('/transaksi', function () {
-    return view('transaksi');
-});
+Route::get('/transaksi', [TransaksiController::class, 'index']);
 
-Route::get('/laporan', function () {
-    return view('laporan');
-});
+Route::get('/laporan', [LaporanController::class, 'index']);

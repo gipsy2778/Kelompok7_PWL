@@ -2,25 +2,23 @@
 
 @section('content')
 
-<h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+<h1 class="text-2xl font-bold mb-4">Dashboard</h1>
 
-<div class="grid grid-cols-3 gap-6">
-
-    <div class="bg-white p-5 shadow rounded">
-        <h2 class="text-gray-500">Total Produk</h2>
-        <p class="text-3xl font-bold">120</p>
+<div class="grid grid-cols-3 gap-4">
+    <div class="bg-white p-4 rounded shadow">
+        <h2>Total Produk</h2>
+        <p class="text-xl">{{ $totalProduk }}</p>
     </div>
 
-    <div class="bg-white p-5 shadow rounded">
-        <h2 class="text-gray-500">Total Transaksi</h2>
-        <p class="text-3xl font-bold">350</p>
+    <div class="bg-white p-4 rounded shadow">
+        <h2>Total Transaksi</h2>
+        <p class="text-xl">{{ $totalTransaksi }}</p>
     </div>
 
-    <div class="bg-white p-5 shadow rounded">
-        <h2 class="text-gray-500">Total Cabang</h2>
-        <p class="text-3xl font-bold">5</p>
+    <div class="bg-white p-4 rounded shadow">
+        <h2>Total User</h2>
+        <p class="text-xl">{{ $totalUser }}</p>
     </div>
-
 </div>
 
 @endsection

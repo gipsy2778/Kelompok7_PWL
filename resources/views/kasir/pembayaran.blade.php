@@ -26,8 +26,15 @@
         @csrf
 
         @foreach($items as $item)
-            <input type="hidden" name="produk[]" value="{{ $item['produk']->nama_produk }}">
-            <input type="hidden" name="jumlah[]" value="{{ $item['jumlah'] }}">
+
+            <input type="hidden"
+                name="produk_id[]"
+                value="{{ $item['produk']->id }}">
+
+            <input type="hidden"
+                name="jumlah[]"
+                value="{{ $item['jumlah'] }}">
+
         @endforeach
 
         <div class="mb-4">

@@ -66,30 +66,39 @@
 
         @endif
 
+        {{-- SUPERVISOR --}}
         @if($role == 'supervisor')
 
             <a href="/supervisor"
             class="block px-4 py-2 rounded-lg
             {{ request()->is('supervisor') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white transition' }}">
+
                 Dashboard
+
             </a>
 
             <a href="/supervisor/monitoring-transaksi"
             class="block px-4 py-2 rounded-lg
-            {{ request()->is('supervisor/monitoring-transaksi*') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white transition' }}">
+            {{ request()->is('supervisor/monitoring-transaksi') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white transition' }}">
+
                 Monitoring Transaksi
+
             </a>
 
             <a href="/supervisor/kasir"
             class="block px-4 py-2 rounded-lg
-            {{ request()->is('supervisor/kasir*') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white transition' }}">
+            {{ request()->is('supervisor/kasir') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white transition' }}">
+
                 Data Kasir
+
             </a>
 
             <a href="/supervisor/laporan-transaksi"
             class="block px-4 py-2 rounded-lg
-            {{ request()->is('supervisor/laporan-transaksi*') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white transition' }}">
+            {{ request()->is('supervisor/laporan-transaksi') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white transition' }}">
+
                 Laporan Transaksi
+
             </a>
 
         @endif

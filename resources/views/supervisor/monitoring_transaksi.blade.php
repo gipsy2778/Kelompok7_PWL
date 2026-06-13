@@ -6,36 +6,79 @@
     Monitoring Transaksi
 </h1>
 
-<table class="min-w-full bg-white rounded shadow">
+<div class="bg-white rounded-xl shadow overflow-hidden">
 
-    <thead class="bg-gray-100">
+    <table class="min-w-full">
 
-        <tr>
-            <th class="p-3">No</th>
-            <th class="p-3">Kode</th>
-            <th class="p-3">Tanggal</th>
-            <th class="p-3">Kasir</th>
-            <th class="p-3">Total</th>
-            <th class="p-3">Status</th>
-        </tr>
+        <thead class="bg-gray-100">
 
-    </thead>
+            <tr>
 
-    <tbody>
+                <th class="p-3 text-left">No</th>
 
-        <tr class="border-t">
-            <td class="p-3">1</td>
-            <td class="p-3">TRX001</td>
-            <td class="p-3">01-06-2026</td>
-            <td class="p-3">Kasir Jakarta</td>
-            <td class="p-3">Rp 250.000</td>
-            <td class="p-3 text-green-600">
-                Sukses
-            </td>
-        </tr>
+                <th class="p-3 text-left">Kode</th>
 
-    </tbody>
+                <th class="p-3 text-left">Tanggal</th>
 
-</table>
+                <th class="p-3 text-left">Kasir</th>
+
+                <th class="p-3 text-left">Total</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @forelse($transaksi as $index => $item)
+
+            <tr class="border-t">
+
+                <td class="p-3">
+                    {{ $transaksi->firstItem() + $index }}
+                </td>
+
+                <td class="p-3">
+                    {{ $item->kode_transaksi }}
+                </td>
+
+                <td class="p-3">
+                    {{ \Carbon\Carbon::parse($item->tanggal)->format('d-m-Y') }}
+                </td>
+
+                <td class="p-3">
+                    {{ $item->nama_kasir }}
+                </td>
+
+                <td class="p-3 font-semibold text-green-600">
+                    Rp {{ number_format($item->total) }}
+                </td>
+
+            </tr>
+
+            @empty
+
+            <tr>
+
+                <td colspan="5"
+                    class="text-center p-5 text-gray-500">
+
+                    Belum ada transaksi
+
+                </td>
+
+            </tr>
+
+            @endforelse
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<div class="mt-4">
+    {{ $transaksi->links() }}
+</div>
 
 @endsection

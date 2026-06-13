@@ -6,36 +6,42 @@
     Dashboard Supervisor
 </h1>
 
-<div class="grid grid-cols-3 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-    <div class="bg-white p-5 rounded shadow">
+    <div class="bg-white p-5 rounded-xl shadow">
+
         <p class="text-gray-500 text-sm">
-            Transaksi Hari Ini
+            Total Transaksi
         </p>
 
-        <h2 class="text-3xl font-bold">
-            125
+        <h2 class="text-3xl font-bold mt-2">
+            {{ $jumlahTransaksi }}
         </h2>
+
     </div>
 
-    <div class="bg-white p-5 rounded shadow">
+    <div class="bg-white p-5 rounded-xl shadow">
+
         <p class="text-gray-500 text-sm">
-            Kasir Aktif
+            Total Kasir
         </p>
 
-        <h2 class="text-3xl font-bold">
-            8
+        <h2 class="text-3xl font-bold mt-2">
+            {{ $kasirAktif }}
         </h2>
+
     </div>
 
-    <div class="bg-white p-5 rounded shadow">
+    <div class="bg-white p-5 rounded-xl shadow">
+
         <p class="text-gray-500 text-sm">
-            Omzet Hari Ini
+            Total Omzet
         </p>
 
-        <h2 class="text-3xl font-bold text-green-600">
-            Rp 15.250.000
+        <h2 class="text-3xl font-bold text-green-600 mt-2">
+            Rp {{ number_format($omzet,0,',','.') }}
         </h2>
+
     </div>
 
 </div>

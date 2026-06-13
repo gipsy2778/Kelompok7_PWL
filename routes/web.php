@@ -9,6 +9,8 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\GudangController;
+use App\Http\Controllers\SupervisorController;
 
 // LOGIN
 Route::get('/', [AuthController::class, 'login'])
@@ -37,12 +39,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 // MANAGER
 Route::middleware(['auth', 'role:manager'])->group(function () {
-     Route::get('/manager', function () {
-        return view('manager.dashboard');
-    });
+    Route::get('/manager', [ManagerController::class,'dashboard']);
 
     Route::get('/manager/transaksi', [ManagerController::class, 'transaksi']);
-
 
     Route::get('/manager/stok', [ManagerController::class, 'stok']);
 
@@ -62,21 +61,25 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
 
 Route::middleware(['auth', 'role:supervisor'])->group(function () {
 
-    Route::get('/supervisor', function () {
-        return view('supervisor.dashboard');
-    });
+    Route::get(
+        '/supervisor',
+        [SupervisorController::class, 'dashboard']
+    );
 
-    Route::get('/supervisor/monitoring-transaksi', function () {
-        return view('supervisor.monitoring_transaksi');
-    });
+    Route::get(
+        '/supervisor/monitoring-transaksi',
+        [SupervisorController::class, 'monitoringTransaksi']
+    );
 
-    Route::get('/supervisor/kasir', function () {
-        return view('supervisor.kasir');
-    });
+    Route::get(
+        '/supervisor/kasir',
+        [SupervisorController::class, 'kasir']
+    );
 
-    Route::get('/supervisor/laporan-transaksi', function () {
-        return view('supervisor.laporan_transaksi');
-    });
+    Route::get(
+        '/supervisor/laporan-transaksi',
+        [SupervisorController::class, 'laporan']
+    );
 
 });
 
@@ -103,31 +106,15 @@ Route::middleware(['auth','role:kasir'])->group(function () {
 // GUDANG
 // ======================================
 
-Route::middleware(['auth', 'role:gudang'])->group(function () {
+Route::middleware(['auth','role:gudang'])->group(function () {
 
-    // Dashboard
-    Route::get('/gudang', function () {
-        return view('gudang.dashboard');
-    });
+    Route::get('/gudang', [GudangController::class, 'dashboard']);
 
-    // Stok Barang
-    Route::get('/gudang/stok', function () {
-        return view('gudang.stok');
-    });
+    Route::get('/gudang/stok', [GudangController::class, 'stok']);
 
-    // Barang Masuk
-    Route::get('/gudang/barang-masuk', function () {
-        return view('gudang.barang_masuk');
-    });
+    Route::get('/gudang/barang-masuk', [GudangController::class, 'barangMasuk']);
 
-    // Barang Keluar
-    Route::get('/gudang/barang-keluar', function () {
-        return view('gudang.barang_keluar');
-    });
+    Route::get('/gudang/barang-keluar', [GudangController::class, 'barangKeluar']);
 
-    //Riwayat Stok
-    Route::get('/gudang/riwayat-stok', function () {
-    return view('gudang.riwayat_stok');
-    });
-
+    Route::get('/gudang/riwayat-stok', [GudangController::class, 'riwayatStok']);
 });

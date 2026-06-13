@@ -2,47 +2,126 @@
 
 @section('content')
 
-<h1 class="text-2xl font-bold mb-6">
-    Monitoring Transaksi Cabang
-</h1>
+<div class="mb-6">
 
-<div class="bg-white rounded-xl shadow overflow-hidden">
+    <h1 class="text-3xl font-bold text-gray-800">
+        Monitoring Transaksi Cabang
+    </h1>
 
-    <table class="min-w-full">
+    <p class="text-gray-500 mt-1">
+        Monitoring seluruh transaksi cabang secara realtime
+    </p>
 
-        <thead class="bg-gray-100">
-            <tr>
-                <th class="p-3 text-left">No</th>
-                <th class="p-3 text-left">Produk</th>
-                <th class="p-3 text-left">Jumlah</th>
-                <th class="p-3 text-left">Tanggal</th>
-                <th class="p-3 text-left">Total</th>
-            </tr>
-        </thead>
+</div>
 
-        <tbody>
 
-            @forelse($transaksi as $i => $t)
-            <tr class="border-t">
-                <td class="p-3">{{ $i + 1 }}</td>
-                <td class="p-3">{{ $t->produk }}</td>
-                <td class="p-3">{{ $t->jumlah }}</td>
-                <td class="p-3">{{ $t->created_at->format('d-m-Y') }}</td>
-                <td class="p-3">
-                    Rp {{ number_format($t->jumlah * 10000) }}
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="5" class="p-3 text-center">
-                    Tidak ada transaksi
-                </td>
-            </tr>
-            @endforelse
+{{-- CARD --}}
+<div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
-        </tbody>
+    {{-- HEADER --}}
+    <div class="p-5 border-b bg-gray-50">
 
-    </table>
+        <div class="flex justify-between items-center">
+
+            <h2 class="font-semibold text-lg text-gray-700">
+                Data Transaksi
+            </h2>
+
+            <form>
+
+                <input
+                    type="text"
+                    placeholder="Cari transaksi..."
+                    class="border rounded-lg px-4 py-2 focus:ring focus:ring-blue-200">
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    {{-- TABLE --}}
+    <div class="overflow-x-auto">
+
+        <table class="min-w-full">
+
+            <thead class="bg-slate-800 text-white">
+
+                <tr>
+
+                    <th class="px-6 py-4 text-left">
+                        No
+                    </th>
+
+                    <th class="px-6 py-4 text-left">
+                        Kode Transaksi
+                    </th>
+
+                    <th class="px-6 py-4 text-left">
+                        Tanggal
+                    </th>
+
+                    <th class="px-6 py-4 text-left">
+                        Kasir
+                    </th>
+
+                    <th class="px-6 py-4 text-right">
+                        Total
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @forelse($transaksi as $i => $t)
+
+                <tr class="border-b hover:bg-gray-50 transition">
+
+                    <td class="px-6 py-4">
+                        {{ $i + 1 }}
+                    </td>
+
+                    <td class="px-6 py-4 font-medium">
+                        {{ $t->kode_transaksi }}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        {{ \Carbon\Carbon::parse($t->tanggal)->format('d M Y') }}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        {{ $t->nama_kasir }}
+                    </td>
+
+                    <td class="px-6 py-4 text-right font-semibold text-green-600">
+                        Rp {{ number_format($t->total,0,',','.') }}
+                    </td>
+
+                </tr>
+
+                @empty
+
+                <tr>
+
+                    <td colspan="5"
+                        class="text-center py-10 text-gray-500">
+
+                        Belum ada transaksi
+
+                    </td>
+
+                </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
 

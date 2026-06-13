@@ -15,7 +15,7 @@
         </h2>
 
         <p class="text-3xl font-bold mt-2">
-            350
+            {{ $totalProduk }}
         </p>
 
     </div>
@@ -27,7 +27,7 @@
         </h2>
 
         <p class="text-3xl font-bold mt-2 text-red-500">
-            12
+            {{ $stokMenipis }}
         </p>
 
     </div>
@@ -39,7 +39,7 @@
         </h2>
 
         <p class="text-3xl font-bold mt-2">
-            185
+            {{ $transaksiHariIni }}
         </p>
 
     </div>
@@ -51,7 +51,7 @@
         </h2>
 
         <p class="text-xl font-bold mt-2 text-green-600">
-            Rp 12.500.000
+            Rp {{ number_format($pendapatanHariIni) }}
         </p>
 
     </div>

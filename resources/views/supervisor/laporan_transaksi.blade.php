@@ -6,55 +6,68 @@
     Laporan Transaksi
 </h1>
 
-<div class="bg-white p-5 rounded shadow mb-4">
+<div class="bg-white rounded-xl shadow overflow-hidden">
 
-    <form class="flex gap-2">
+    <table class="min-w-full">
 
-        <input type="date"
-               class="border rounded px-3 py-2">
+        <thead class="bg-gray-100">
 
-        <input type="date"
-               class="border rounded px-3 py-2">
+            <tr>
 
-        <button class="bg-blue-500 text-white px-4 rounded">
-            Filter
-        </button>
+                <th class="p-3 text-left">
+                    Tanggal
+                </th>
 
-    </form>
+                <th class="p-3 text-left">
+                    Jumlah Transaksi
+                </th>
 
-</div>
+                <th class="p-3 text-left">
+                    Omzet
+                </th>
 
-<div class="grid grid-cols-3 gap-4">
+            </tr>
 
-    <div class="bg-white p-5 rounded shadow">
-        <p class="text-gray-500">
-            Total Transaksi
-        </p>
+        </thead>
 
-        <h2 class="text-3xl font-bold">
-            560
-        </h2>
-    </div>
+        <tbody>
 
-    <div class="bg-white p-5 rounded shadow">
-        <p class="text-gray-500">
-            Total Omzet
-        </p>
+            @forelse($laporan as $item)
 
-        <h2 class="text-3xl font-bold text-green-600">
-            Rp 75.000.000
-        </h2>
-    </div>
+            <tr class="border-t">
 
-    <div class="bg-white p-5 rounded shadow">
-        <p class="text-gray-500">
-            Kasir Teraktif
-        </p>
+                <td class="p-3">
+                    {{ $item->tanggal }}
+                </td>
 
-        <h2 class="text-xl font-bold">
-            Kasir Jakarta
-        </h2>
-    </div>
+                <td class="p-3">
+                    {{ $item->jumlah_transaksi }}
+                </td>
+
+                <td class="p-3 font-semibold text-green-600">
+                    Rp {{ number_format($item->omzet) }}
+                </td>
+
+            </tr>
+
+            @empty
+
+            <tr>
+
+                <td colspan="3"
+                    class="text-center p-5 text-gray-500">
+
+                    Belum ada laporan
+
+                </td>
+
+            </tr>
+
+            @endforelse
+
+        </tbody>
+
+    </table>
 
 </div>
 

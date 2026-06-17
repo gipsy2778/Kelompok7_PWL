@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ManagerController extends Controller
@@ -13,17 +14,24 @@ class ManagerController extends Controller
     // =========================
     public function dashboard()
     {
-        $totalProduk = DB::table('produk')->count();
+        $cabangId = Auth::user()->cabang_id;
+
+        $totalProduk = DB::table('stok_cabang')
+            ->where('cabang_id', $cabangId)
+            ->count();
 
         $stokMenipis = DB::table('stok_cabang')
+            ->where('cabang_id', $cabangId)
             ->where('stok', '<=', 10)
             ->count();
 
         $transaksiHariIni = DB::table('transaksi')
+            ->where('cabang_id', $cabangId)
             ->whereDate('tanggal', today())
             ->count();
 
         $pendapatanHariIni = DB::table('transaksi')
+            ->where('cabang_id', $cabangId)
             ->whereDate('tanggal', today())
             ->sum('total');
 
@@ -38,11 +46,14 @@ class ManagerController extends Controller
         );
     }
 
+
     // =========================
     // MONITORING TRANSAKSI
     // =========================
     public function transaksi()
     {
+        $cabangId = Auth::user()->cabang_id;
+
         $transaksi = DB::table('transaksi')
             ->join('users', 'transaksi.user_id', '=', 'users.id')
             ->select(
@@ -52,6 +63,7 @@ class ManagerController extends Controller
                 'transaksi.total',
                 'users.name as nama_kasir'
             )
+            ->where('transaksi.cabang_id', $cabangId)
             ->orderBy('transaksi.tanggal', 'desc')
             ->paginate(10);
 
@@ -61,11 +73,14 @@ class ManagerController extends Controller
         );
     }
 
+
     // =========================
     // MONITORING STOK
     // =========================
     public function stok()
     {
+        $cabangId = Auth::user()->cabang_id;
+
         $produk = DB::table('stok_cabang')
             ->join(
                 'produk',
@@ -84,6 +99,7 @@ class ManagerController extends Controller
                 'cabang.nama_cabang',
                 'stok_cabang.stok'
             )
+            ->where('stok_cabang.cabang_id', $cabangId)
             ->orderBy('produk.nama_produk')
             ->get();
 
@@ -93,11 +109,14 @@ class ManagerController extends Controller
         );
     }
 
+
     // =========================
     // LAPORAN MANAGER
     // =========================
     public function laporan()
     {
+        $cabangId = Auth::user()->cabang_id;
+
         $transaksi = DB::table('transaksi')
             ->join('users', 'transaksi.user_id', '=', 'users.id')
             ->select(
@@ -106,13 +125,16 @@ class ManagerController extends Controller
                 'transaksi.total',
                 'users.name as nama_kasir'
             )
+            ->where('transaksi.cabang_id', $cabangId)
             ->orderBy('transaksi.tanggal', 'desc')
             ->get();
 
         $totalPendapatan = DB::table('transaksi')
+            ->where('cabang_id', $cabangId)
             ->sum('total');
 
         $totalTransaksi = DB::table('transaksi')
+            ->where('cabang_id', $cabangId)
             ->count();
 
         return view(
@@ -125,11 +147,14 @@ class ManagerController extends Controller
         );
     }
 
+
     // =========================
     // CETAK PDF
     // =========================
     public function cetakLaporan()
     {
+        $cabangId = Auth::user()->cabang_id;
+
         $transaksi = DB::table('transaksi')
             ->join('users', 'transaksi.user_id', '=', 'users.id')
             ->select(
@@ -138,13 +163,16 @@ class ManagerController extends Controller
                 'transaksi.total',
                 'users.name as nama_kasir'
             )
+            ->where('transaksi.cabang_id', $cabangId)
             ->orderBy('transaksi.tanggal', 'desc')
             ->get();
 
         $totalPendapatan = DB::table('transaksi')
+            ->where('cabang_id', $cabangId)
             ->sum('total');
 
         $totalTransaksi = DB::table('transaksi')
+            ->where('cabang_id', $cabangId)
             ->count();
 
         $pdf = Pdf::loadView(

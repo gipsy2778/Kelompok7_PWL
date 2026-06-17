@@ -2,47 +2,174 @@
 
 @section('content')
 
-<h1 class="text-2xl font-bold mb-6">
-    Riwayat Pergerakan Stok
-</h1>
+<div class="flex flex-col h-full">
 
-<table class="min-w-full bg-white rounded shadow">
+    {{-- HEADER --}}
+    <div class="mb-6">
 
-    <thead class="bg-gray-100">
+        <h1 class="text-2xl font-bold text-gray-800">
+            Riwayat Pergerakan Stok
+        </h1>
 
-        <tr>
-            <th class="p-2">No</th>
-            <th class="p-2">Tanggal</th>
-            <th class="p-2">Produk</th>
-            <th class="p-2">Jenis</th>
-            <th class="p-2">Jumlah</th>
-            <th class="p-2">Petugas</th>
-        </tr>
+        <p class="text-sm text-gray-500 mt-1">
+            Riwayat barang masuk dan keluar gudang
+        </p>
 
-    </thead>
+    </div>
 
-    <tbody>
 
-        <tr class="border-t">
-            <td class="p-2">1</td>
-            <td class="p-2">01-06-2026</td>
-            <td class="p-2">Indomie</td>
-            <td class="p-2 text-green-500">Masuk</td>
-            <td class="p-2">100</td>
-            <td class="p-2">Gudang Jakarta</td>
-        </tr>
+    {{-- TABLE --}}
+    <div class="flex flex-col flex-1">
 
-        <tr class="border-t">
-            <td class="p-2">2</td>
-            <td class="p-2">01-06-2026</td>
-            <td class="p-2">Aqua</td>
-            <td class="p-2 text-red-500">Keluar</td>
-            <td class="p-2">5</td>
-            <td class="p-2">Gudang Jakarta</td>
-        </tr>
+        <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
 
-    </tbody>
+            <table class="min-w-full">
 
-</table>
+                <thead class="bg-gray-50">
+
+                    <tr>
+
+                        <th class="p-3 text-left font-semibold">
+                            No
+                        </th>
+
+                        <th class="p-3 text-left font-semibold">
+                            Tanggal
+                        </th>
+
+                        <th class="p-3 text-left font-semibold">
+                            Produk
+                        </th>
+
+                        <th class="p-3 text-left font-semibold">
+                            Jenis
+                        </th>
+
+                        <th class="p-3 text-left font-semibold">
+                            Jumlah
+                        </th>
+
+                        <th class="p-3 text-left font-semibold">
+                            Stok Sebelum
+                        </th>
+
+                        <th class="p-3 text-left font-semibold">
+                            Stok Sesudah
+                        </th>
+
+                        <th class="p-3 text-left font-semibold">
+                            Petugas
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @forelse($riwayat as $index => $r)
+
+                    <tr class="border-t hover:bg-gray-50">
+
+                        <td class="p-3">
+
+                            {{ ($riwayat->currentPage() - 1) * $riwayat->perPage() + $index + 1 }}
+
+                        </td>
+
+                        <td class="p-3">
+
+                            {{ \Carbon\Carbon::parse($r->created_at)->format('d-m-Y H:i') }}
+
+                        </td>
+
+                        <td class="p-3">
+
+                            {{ $r->nama_produk }}
+
+                        </td>
+
+                        <td class="p-3">
+
+                            @if($r->jenis == 'masuk')
+
+                                <span class="text-green-600 font-semibold">
+                                    Masuk
+                                </span>
+
+                            @elseif($r->jenis == 'keluar')
+
+                                <span class="text-red-600 font-semibold">
+                                    Keluar
+                                </span>
+
+                            @else
+
+                                <span class="text-blue-600 font-semibold">
+                                    Penjualan
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        <td class="p-3 font-semibold">
+
+                            {{ $r->jumlah }}
+
+                        </td>
+
+                        <td class="p-3">
+
+                            {{ $r->stok_sebelum }}
+
+                        </td>
+
+                        <td class="p-3">
+
+                            {{ $r->stok_sesudah }}
+
+                        </td>
+
+                        <td class="p-3">
+
+                            {{ $r->name }}
+
+                        </td>
+
+                    </tr>
+
+                    @empty
+
+                    <tr>
+
+                        <td colspan="8"
+                            class="p-6 text-center text-gray-500">
+
+                            Belum ada riwayat stok
+
+                        </td>
+
+                    </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {{-- PAGINATION --}}
+        <div class="mt-auto pt-4 flex justify-end">
+
+            {{ $riwayat->onEachSide(1)->links() }}
+
+        </div>
+
+    </div>
+
+</div>
 
 @endsection

@@ -2,86 +2,121 @@
 
 @section('content')
 
-<h1 class="text-2xl font-bold mb-6">
-    Monitoring Stok Cabang
-</h1>
+<div class="flex flex-col h-full">
 
-<div class="bg-white rounded-xl shadow overflow-hidden">
+    <div class="mb-6">
 
-    <table class="min-w-full">
+        <h1 class="text-2xl font-bold text-gray-800">
+            Monitoring Stok Cabang
+        </h1>
 
-        <thead class="bg-gray-100">
+        <p class="text-gray-500 mt-1">
+            Daftar stok produk pada cabang yang Anda kelola
+        </p>
 
-            <tr>
-                <th class="p-3 text-left">No</th>
-                <th class="p-3 text-left">Produk</th>
-                <th class="p-3 text-left">Cabang</th>
-                <th class="p-3 text-left">Stok</th>
-                <th class="p-3 text-left">Status</th>
-            </tr>
+    </div>
 
-        </thead>
 
-        <tbody>
+    <div class="bg-white rounded-xl shadow overflow-hidden">
 
-            @forelse($produk as $i => $s)
+        <table class="min-w-full">
 
-            <tr class="border-t">
+            <thead class="bg-gray-100">
 
-                <td class="p-3">
-                    {{ $i + 1 }}
-                </td>
+                <tr>
 
-                <td class="p-3">
-                    {{ $s->nama_produk }}
-                </td>
+                    <th class="p-3 text-left">
+                        No
+                    </th>
 
-                <td class="p-3">
-                    {{ $s->nama_cabang }}
-                </td>
+                    <th class="p-3 text-left">
+                        Produk
+                    </th>
 
-                <td class="p-3">
-                    {{ $s->stok }}
-                </td>
+                    <th class="p-3 text-left">
+                        Cabang
+                    </th>
 
-                <td class="p-3">
+                    <th class="p-3 text-left">
+                        Stok
+                    </th>
 
-                    @if($s->stok <= 10)
+                    <th class="p-3 text-left">
+                        Status
+                    </th>
 
-                        <span class="text-red-500 font-semibold">
-                            Menipis
-                        </span>
+                </tr>
 
-                    @else
+            </thead>
 
-                        <span class="text-green-500 font-semibold">
-                            Aman
-                        </span>
+            <tbody>
 
-                    @endif
+                @forelse($produk as $index => $s)
 
-                </td>
+                <tr class="border-t hover:bg-gray-50">
 
-            </tr>
+                    <td class="p-3">
+                        {{ $index + 1 }}
+                    </td>
 
-            @empty
+                    <td class="p-3">
+                        {{ $s->nama_produk }}
+                    </td>
 
-            <tr>
+                    <td class="p-3">
+                        {{ $s->nama_cabang }}
+                    </td>
 
-                <td colspan="5"
-                    class="p-4 text-center text-gray-500">
+                    <td class="p-3 font-semibold">
+                        {{ $s->stok }}
+                    </td>
 
-                    Data stok kosong
+                    <td class="p-3">
 
-                </td>
+                        @if($s->stok <= 10)
 
-            </tr>
+                            <span class="text-red-500 font-semibold">
+                                Menipis
+                            </span>
 
-            @endforelse
+                        @elseif($s->stok <= 25)
 
-        </tbody>
+                            <span class="text-yellow-500 font-semibold">
+                                Perhatian
+                            </span>
 
-    </table>
+                        @else
+
+                            <span class="text-green-500 font-semibold">
+                                Aman
+                            </span>
+
+                        @endif
+
+                    </td>
+
+                </tr>
+
+                @empty
+
+                <tr>
+
+                    <td colspan="5"
+                        class="text-center p-6 text-gray-500">
+
+                        Tidak ada data stok
+
+                    </td>
+
+                </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
 

@@ -2,57 +2,73 @@
 
 @section('content')
 
-<h1 class="text-2xl font-bold mb-6">
-    Dashboard Manager
-</h1>
+<div class="flex flex-col h-full">
 
-<div class="grid grid-cols-4 gap-6">
+    <div class="mb-6">
 
-    <div class="bg-white p-6 rounded-xl shadow">
+        <h1 class="text-2xl font-bold text-gray-800">
+            Dashboard Manager
+        </h1>
 
-        <h2 class="text-gray-500">
-            Total Produk
-        </h2>
-
-        <p class="text-3xl font-bold mt-2">
-            {{ $totalProduk }}
+        <p class="text-gray-500 mt-1">
+            Ringkasan aktivitas cabang yang Anda kelola
         </p>
 
     </div>
 
-    <div class="bg-white p-6 rounded-xl shadow">
 
-        <h2 class="text-gray-500">
-            Stok Menipis
-        </h2>
+    <div class="grid grid-cols-4 gap-6">
 
-        <p class="text-3xl font-bold mt-2 text-red-500">
-            {{ $stokMenipis }}
-        </p>
+        <div class="bg-white rounded-xl shadow p-6">
 
-    </div>
+            <p class="text-gray-500 text-sm mb-2">
+                Total Produk
+            </p>
 
-    <div class="bg-white p-6 rounded-xl shadow">
+            <h2 class="text-3xl font-bold text-gray-800">
+                {{ $totalProduk }}
+            </h2>
 
-        <h2 class="text-gray-500">
-            Transaksi Hari Ini
-        </h2>
+        </div>
 
-        <p class="text-3xl font-bold mt-2">
-            {{ $transaksiHariIni }}
-        </p>
 
-    </div>
+        <div class="bg-white rounded-xl shadow p-6">
 
-    <div class="bg-white p-6 rounded-xl shadow">
+            <p class="text-gray-500 text-sm mb-2">
+                Stok Menipis
+            </p>
 
-        <h2 class="text-gray-500">
-            Pendapatan Hari Ini
-        </h2>
+            <h2 class="text-3xl font-bold text-red-500">
+                {{ $stokMenipis }}
+            </h2>
 
-        <p class="text-xl font-bold mt-2 text-green-600">
-            Rp {{ number_format($pendapatanHariIni) }}
-        </p>
+        </div>
+
+
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <p class="text-gray-500 text-sm mb-2">
+                Transaksi Hari Ini
+            </p>
+
+            <h2 class="text-3xl font-bold text-gray-800">
+                {{ $transaksiHariIni }}
+            </h2>
+
+        </div>
+
+
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <p class="text-gray-500 text-sm mb-2">
+                Pendapatan Hari Ini
+            </p>
+
+            <h2 class="text-2xl font-bold text-green-600">
+                Rp {{ number_format($pendapatanHariIni) }}
+            </h2>
+
+        </div>
 
     </div>
 

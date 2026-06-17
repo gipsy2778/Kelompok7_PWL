@@ -2,71 +2,46 @@
 
 @section('content')
 
-<div class="mb-6">
+<div class="flex flex-col h-full">
 
-    <h1 class="text-3xl font-bold text-gray-800">
-        Monitoring Transaksi Cabang
-    </h1>
+    <div class="mb-6">
 
-    <p class="text-gray-500 mt-1">
-        Monitoring seluruh transaksi cabang secara realtime
-    </p>
+        <h1 class="text-2xl font-bold text-gray-800">
+            Monitoring Transaksi Cabang
+        </h1>
 
-</div>
-
-
-{{-- CARD --}}
-<div class="bg-white rounded-2xl shadow-md overflow-hidden">
-
-    {{-- HEADER --}}
-    <div class="p-5 border-b bg-gray-50">
-
-        <div class="flex justify-between items-center">
-
-            <h2 class="font-semibold text-lg text-gray-700">
-                Data Transaksi
-            </h2>
-
-            <form>
-
-                <input
-                    type="text"
-                    placeholder="Cari transaksi..."
-                    class="border rounded-lg px-4 py-2 focus:ring focus:ring-blue-200">
-
-            </form>
-
-        </div>
+        <p class="text-gray-500 mt-1">
+            Daftar transaksi cabang yang Anda kelola
+        </p>
 
     </div>
 
 
-    {{-- TABLE --}}
-    <div class="overflow-x-auto">
+    <div class="bg-white rounded-xl shadow overflow-hidden flex flex-col flex-1">
 
         <table class="min-w-full">
 
-            <thead class="bg-slate-800 text-white">
+            <thead class="bg-gray-100">
 
                 <tr>
 
-                    <th class="px-6 py-4 text-left">
+                    <th class="p-3 text-left">
                         No
                     </th>
 
-                    <th class="px-6 py-4 text-left">
+                    <th class="p-3 text-left">
                         Kode Transaksi
                     </th>
 
-                    <th class="px-6 py-4 text-left">
+                    <th class="p-3 text-left">
                         Tanggal
                     </th>
 
-                    <th class="px-6 py-4 text-left">
+                    <th class="p-3 text-left">
                         Kasir
                     </th>
 
-                    <th class="px-6 py-4 text-right">
+                    <th class="p-3 text-right">
                         Total
                     </th>
 
@@ -76,28 +51,32 @@
 
             <tbody>
 
-                @forelse($transaksi as $i => $t)
+                @forelse($transaksi as $index => $t)
 
-                <tr class="border-b hover:bg-gray-50 transition">
+                <tr class="border-t hover:bg-gray-50">
 
-                    <td class="px-6 py-4">
-                        {{ $i + 1 }}
+                    <td class="p-3">
+
+                        {{ ($transaksi->currentPage() - 1)
+                            * $transaksi->perPage()
+                            + $index + 1 }}
+
                     </td>
 
-                    <td class="px-6 py-4 font-medium">
+                    <td class="p-3 font-medium">
                         {{ $t->kode_transaksi }}
                     </td>
 
-                    <td class="px-6 py-4">
-                        {{ \Carbon\Carbon::parse($t->tanggal)->format('d M Y') }}
+                    <td class="p-3">
+                        {{ $t->tanggal }}
                     </td>
 
-                    <td class="px-6 py-4">
+                    <td class="p-3">
                         {{ $t->nama_kasir }}
                     </td>
 
-                    <td class="px-6 py-4 text-right font-semibold text-green-600">
-                        Rp {{ number_format($t->total,0,',','.') }}
+                    <td class="p-3 text-right font-semibold text-green-600">
+                        Rp {{ number_format($t->total) }}
                     </td>
 
                 </tr>
@@ -107,7 +86,7 @@
                 <tr>
 
                     <td colspan="5"
-                        class="text-center py-10 text-gray-500">
+                        class="text-center p-6 text-gray-500">
 
                         Belum ada transaksi
 
@@ -120,6 +99,13 @@
             </tbody>
 
         </table>
+
+    </div>
+
+
+    <div class="mt-4 flex justify-end">
+
+        {{ $transaksi->onEachSide(1)->links() }}
 
     </div>
 

@@ -2,105 +2,144 @@
 
 @section('content')
 
-<h1 class="text-2xl font-bold mb-6">
-    Monitoring Stok
-</h1>
+<div class="flex flex-col h-full">
 
-<table class="min-w-full bg-white rounded shadow">
+    {{-- HEADER --}}
+    <div class="mb-6">
 
-    <thead class="bg-gray-100">
+        <h1 class="text-2xl font-bold text-gray-800">
+            Monitoring Stok
+        </h1>
 
-        <tr>
+    </div>
 
-            <th class="p-3 text-left">
-                No
-            </th>
 
-            <th class="p-3 text-left">
-                Produk
-            </th>
+    {{-- TABLE --}}
+    <div class="flex flex-col flex-1">
 
-            <th class="p-3 text-left">
-                Cabang
-            </th>
+        <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
 
-            <th class="p-3 text-left">
-                Stok
-            </th>
+            <table class="min-w-full">
 
-            <th class="p-3 text-left">
-                Status
-            </th>
+                <thead class="bg-gray-50">
 
-        </tr>
+                    <tr>
 
-    </thead>
+                        <th class="p-3 text-left font-semibold">
+                            No
+                        </th>
 
-    <tbody>
+                        <th class="p-3 text-left font-semibold">
+                            Produk
+                        </th>
 
-        @forelse($stok as $index => $item)
+                        <th class="p-3 text-left font-semibold">
+                            Cabang
+                        </th>
 
-        <tr class="border-t">
+                        <th class="p-3 text-left font-semibold">
+                            Stok
+                        </th>
 
-            <td class="p-3">
-                {{ $index + 1 }}
-            </td>
+                        <th class="p-3 text-left font-semibold">
+                            Status
+                        </th>
 
-            <td class="p-3">
-                {{ $item->nama_produk }}
-            </td>
+                    </tr>
 
-            <td class="p-3">
-                {{ $item->nama_cabang }}
-            </td>
+                </thead>
 
-            <td class="p-3 font-semibold">
-                {{ $item->stok }}
-            </td>
+                <tbody>
 
-            <td class="p-3">
+                    @forelse($stok as $index => $item)
 
-                @if($item->stok <= 10)
+                    <tr class="border-t hover:bg-gray-50">
 
-                    <span class="text-red-500 font-semibold">
-                        Menipis
-                    </span>
+                        <td class="p-3">
 
-                @elseif($item->stok <= 25)
+                            {{
+                                ($stok->currentPage() - 1)
+                                * $stok->perPage()
+                                + $index + 1
+                            }}
 
-                    <span class="text-yellow-500 font-semibold">
-                        Perhatian
-                    </span>
+                        </td>
 
-                @else
+                        <td class="p-3 font-medium">
 
-                    <span class="text-green-500 font-semibold">
-                        Aman
-                    </span>
+                            {{ $item->nama_produk }}
 
-                @endif
+                        </td>
 
-            </td>
+                        <td class="p-3">
 
-        </tr>
+                            {{ $item->nama_cabang }}
 
-        @empty
+                        </td>
 
-        <tr>
+                        <td class="p-3 font-semibold">
 
-            <td colspan="5"
-                class="text-center p-5 text-gray-500">
+                            {{ $item->stok }}
 
-                Tidak ada data stok
+                        </td>
 
-            </td>
+                        <td class="p-3">
 
-        </tr>
+                            @if($item->stok <= 10)
 
-        @endforelse
+                                <span class="px-2 py-1 bg-red-100 text-red-600 rounded text-xs font-semibold">
+                                    Menipis
+                                </span>
 
-    </tbody>
+                            @elseif($item->stok <= 25)
 
-</table>
+                                <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-semibold">
+                                    Perhatian
+                                </span>
+
+                            @else
+
+                                <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-xs font-semibold">
+                                    Aman
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                    </tr>
+
+                    @empty
+
+                    <tr>
+
+                        <td colspan="5"
+                            class="text-center p-6 text-gray-500">
+
+                            Tidak ada data stok
+
+                        </td>
+
+                    </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {{-- PAGINATION --}}
+        <div class="mt-auto pt-4 flex justify-end">
+
+            {{ $stok->onEachSide(1)->links() }}
+
+        </div>
+
+    </div>
+
+</div>
 
 @endsection

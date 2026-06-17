@@ -117,4 +117,9 @@ Route::middleware(['auth','role:gudang'])->group(function () {
     Route::get('/gudang/barang-keluar', [GudangController::class, 'barangKeluar']);
 
     Route::get('/gudang/riwayat-stok', [GudangController::class, 'riwayatStok']);
+
+    Route::post(
+    '/gudang/barang-keluar',
+    [GudangController::class, 'simpanBarangKeluar']
+);
 });

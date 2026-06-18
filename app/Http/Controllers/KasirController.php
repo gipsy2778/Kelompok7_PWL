@@ -9,31 +9,120 @@ use App\Models\Produk;
 
 class KasirController extends Controller
 {
+    // =========================
+    // DASHBOARD
+    // =========================
     public function dashboard()
     {
-        return view('kasir.dashboard');
+        $cabangId = Auth::user()->cabang_id;
+
+        $transaksiHariIni = DB::table('transaksi')
+            ->where('cabang_id', $cabangId)
+            ->whereDate('tanggal', today())
+            ->count();
+
+        $omzetHariIni = DB::table('transaksi')
+            ->where('cabang_id', $cabangId)
+            ->whereDate('tanggal', today())
+            ->sum('total');
+
+        $produkTerjual = DB::table('detail_transaksi')
+            ->join(
+                'transaksi',
+                'detail_transaksi.transaksi_id',
+                '=',
+                'transaksi.id'
+            )
+            ->where('transaksi.cabang_id', $cabangId)
+            ->whereDate('transaksi.tanggal', today())
+            ->sum('detail_transaksi.jumlah');
+
+        return view(
+            'kasir.dashboard',
+            compact(
+                'transaksiHariIni',
+                'omzetHariIni',
+                'produkTerjual'
+            )
+        );
     }
 
+    // =========================
+    // DAFTAR PRODUK
+    // =========================
     public function transaksi(Request $request)
     {
-        $produk = Produk::query();
+        $produk = DB::table('produk')
+            ->join(
+                'stok_cabang',
+                'produk.id',
+                '=',
+                'stok_cabang.produk_id'
+            )
+            ->where(
+                'stok_cabang.cabang_id',
+                Auth::user()->cabang_id
+            );
 
         if ($request->search) {
-            $produk->where('nama_produk', 'like', '%' . $request->search . '%');
+
+            $produk->where(
+                'produk.nama_produk',
+                'like',
+                '%' . $request->search . '%'
+            );
         }
 
-        $produk = $produk->paginate(10);
+        $produk = $produk
+            ->select(
+                'produk.*',
+                'stok_cabang.stok'
+            )
+            ->paginate(10);
 
-        return view('kasir.transaksi', compact('produk'));
+        return view(
+            'kasir.transaksi',
+            compact('produk')
+        );
     }
 
+    // =========================
+    // TRANSAKSI BARU
+    // =========================
     public function transaksiBaru()
     {
-        $produk = Produk::all();
-        return view('kasir.transaksi_baru', compact('produk'));
+        $produk = DB::table('produk')
+            ->join(
+                'stok_cabang',
+                'produk.id',
+                '=',
+                'stok_cabang.produk_id'
+            )
+            ->where(
+                'stok_cabang.cabang_id',
+                Auth::user()->cabang_id
+            )
+            ->where(
+                'stok_cabang.stok',
+                '>',
+                0
+            )
+            ->select(
+                'produk.*',
+                'stok_cabang.stok'
+            )
+            ->orderBy('produk.nama_produk')
+            ->get();
+
+        return view(
+            'kasir.transaksi_baru',
+            compact('produk')
+        );
     }
 
-    // 🔥 MULTI PRODUK
+    // =========================
+    // PEMBAYARAN
+    // =========================
     public function pembayaran(Request $request)
     {
         $items = [];
@@ -42,9 +131,11 @@ class KasirController extends Controller
         foreach ($request->jumlah as $produk_id => $qty) {
 
             if ($qty > 0) {
+
                 $produk = Produk::find($produk_id);
 
                 $subtotal = $produk->harga * $qty;
+
                 $grandTotal += $subtotal;
 
                 $items[] = [
@@ -55,11 +146,19 @@ class KasirController extends Controller
             }
         }
 
-        return view('kasir.pembayaran', compact('items', 'grandTotal'));
+        return view(
+            'kasir.pembayaran',
+            compact(
+                'items',
+                'grandTotal'
+            )
+        );
     }
 
-    // 🔥 SIMPAN MULTI DATA
-   public function store(Request $request)
+    // =========================
+    // SIMPAN TRANSAKSI
+    // =========================
+    public function store(Request $request)
     {
         DB::beginTransaction();
 
@@ -71,36 +170,30 @@ class KasirController extends Controller
 
                 $produk = Produk::find($produkId);
 
-                $total += $produk->harga * $request->jumlah[$index];
+                $total +=
+                    $produk->harga *
+                    $request->jumlah[$index];
             }
 
-
-            // =========================
-            // SIMPAN TRANSAKSI
-            // =========================
-
             $transaksiId = DB::table('transaksi')
-            ->insertGetId([
+                ->insertGetId([
 
-                'kode_transaksi' => 'TRX-' . date('YmdHis'),
+                    'kode_transaksi' =>
+                        'TRX-' . date('YmdHis'),
 
-                'tanggal' => now(),
+                    'tanggal' => now(),
 
-                'total' => $total,
+                    'total' => $total,
 
-                'user_id' => Auth::id(),
+                    'user_id' => Auth::id(),
 
-                'cabang_id' => Auth::user()->cabang_id,
+                    'cabang_id' =>
+                        Auth::user()->cabang_id,
 
-                'created_at' => now(),
+                    'created_at' => now(),
 
-                'updated_at' => now(),
-            ]);
-
-
-            // =========================
-            // DETAIL TRANSAKSI
-            // =========================
+                    'updated_at' => now(),
+                ]);
 
             foreach ($request->produk_id as $index => $produkId) {
 
@@ -108,33 +201,44 @@ class KasirController extends Controller
 
                 $jumlah = $request->jumlah[$index];
 
-                $subtotal = $produk->harga * $jumlah;
+                $subtotal =
+                    $produk->harga * $jumlah;
 
+                DB::table('detail_transaksi')
+                    ->insert([
 
-                DB::table('detail_transaksi')->insert([
+                        'transaksi_id' =>
+                            $transaksiId,
 
-                    'transaksi_id' => $transaksiId,
+                        'produk_id' =>
+                            $produkId,
 
-                    'produk_id' => $produkId,
+                        'jumlah' =>
+                            $jumlah,
 
-                    'jumlah' => $jumlah,
+                        'harga' =>
+                            $produk->harga,
 
-                    'harga' => $produk->harga,
+                        'subtotal' =>
+                            $subtotal,
 
-                    'subtotal' => $subtotal,
+                        'created_at' =>
+                            now(),
 
-                    'created_at' => now(),
-
-                    'updated_at' => now(),
-                ]);
+                        'updated_at' =>
+                            now(),
+                    ]);
 
                 $stokCabang = DB::table('stok_cabang')
-                ->where('produk_id', $produkId)
-                ->where(
-                    'cabang_id',
-                    Auth::user()->cabang_id
-                )
-                ->first();
+                    ->where(
+                        'produk_id',
+                        $produkId
+                    )
+                    ->where(
+                        'cabang_id',
+                        Auth::user()->cabang_id
+                    )
+                    ->first();
 
                 if (!$stokCabang) {
 
@@ -152,43 +256,62 @@ class KasirController extends Controller
 
                 $stokSebelum = $stokCabang->stok;
 
-                $stokSesudah = $stokCabang->stok - $jumlah;
+                $stokSesudah =
+                    $stokCabang->stok - $jumlah;
 
                 DB::table('stok_cabang')
-                ->where('id', $stokCabang->id)
-                ->update([
+                    ->where(
+                        'id',
+                        $stokCabang->id
+                    )
+                    ->update([
 
-                    'stok' => $stokSesudah,
+                        'stok' =>
+                            $stokSesudah,
 
-                    'updated_at' => now()
-                ]);
+                        'updated_at' =>
+                            now()
+                    ]);
 
-                DB::table('riwayat_stok')->insert([
+                DB::table('riwayat_stok')
+                    ->insert([
 
-                    'produk_id' => $produkId,
+                        'produk_id' =>
+                            $produkId,
 
-                    'cabang_id' => Auth::user()->cabang_id,
+                        'cabang_id' =>
+                            Auth::user()->cabang_id,
 
-                    'user_id' => Auth::id(),
+                        'user_id' =>
+                            Auth::id(),
 
-                    'jenis' => 'penjualan',
+                        'jenis' =>
+                            'penjualan',
 
-                    'jumlah' => $jumlah,
+                        'jumlah' =>
+                            $jumlah,
 
-                    'stok_sebelum' => $stokSebelum,
+                        'stok_sebelum' =>
+                            $stokSebelum,
 
-                    'stok_sesudah' => $stokSesudah,
+                        'stok_sesudah' =>
+                            $stokSesudah,
 
-                    'created_at' => now(),
+                        'created_at' =>
+                            now(),
 
-                    'updated_at' => now()
-                ]);
+                        'updated_at' =>
+                            now()
+                    ]);
             }
 
             DB::commit();
 
             return redirect('/kasir/riwayat')
-                ->with('success', 'Transaksi berhasil disimpan');
+                ->with(
+                    'success',
+                    'Transaksi berhasil disimpan'
+                );
 
         } catch (\Exception $e) {
 
@@ -201,11 +324,17 @@ class KasirController extends Controller
         }
     }
 
+    // =========================
+    // RIWAYAT TRANSAKSI
+    // =========================
     public function riwayat()
     {
         $riwayat = DB::table('transaksi')
-            ->where('user_id', Auth::id())
-            ->orderBy('tanggal', 'desc')
+            ->where(
+                'user_id',
+                Auth::id()
+            )
+            ->orderByDesc('tanggal')
             ->paginate(10);
 
         return view(
@@ -214,26 +343,58 @@ class KasirController extends Controller
         );
     }
 
+    // =========================
+    // DETAIL TRANSAKSI
+    // =========================
     public function detail($id)
     {
         $transaksi = DB::table('transaksi')
-            ->join('users', 'transaksi.user_id', '=', 'users.id')
-            ->join('cabang', 'transaksi.cabang_id', '=', 'cabang.id')
+            ->join(
+                'users',
+                'transaksi.user_id',
+                '=',
+                'users.id'
+            )
+            ->join(
+                'cabang',
+                'transaksi.cabang_id',
+                '=',
+                'cabang.id'
+            )
             ->select(
                 'transaksi.*',
                 'users.name as nama_user',
                 'cabang.nama_cabang'
             )
-            ->where('transaksi.id', $id)
+            ->where(
+                'transaksi.id',
+                $id
+            )
+            ->where(
+                'transaksi.user_id',
+                Auth::id()
+            )
             ->first();
 
+        if (!$transaksi) {
+            abort(404);
+        }
+
         $detail = DB::table('detail_transaksi')
-            ->join('produk', 'detail_transaksi.produk_id', '=', 'produk.id')
+            ->join(
+                'produk',
+                'detail_transaksi.produk_id',
+                '=',
+                'produk.id'
+            )
             ->select(
                 'detail_transaksi.*',
                 'produk.nama_produk'
             )
-            ->where('transaksi_id', $id)
+            ->where(
+                'transaksi_id',
+                $id
+            )
             ->get();
 
         return view(

@@ -2,9 +2,17 @@
 
 @section('content')
 
-<h1 class="text-2xl font-bold mb-6">
-    Data Kasir
-</h1>
+<div class="mb-6">
+
+    <h1 class="text-3xl font-bold text-gray-800">
+        Data Kasir Cabang
+    </h1>
+
+    <p class="text-gray-500 mt-1">
+        Daftar kasir yang terdaftar pada cabang Anda
+    </p>
+
+</div>
 
 <div class="bg-white rounded-xl shadow overflow-hidden">
 
@@ -34,13 +42,13 @@
 
             @forelse($kasir as $index => $item)
 
-            <tr class="border-t">
+            <tr class="border-t hover:bg-gray-50">
 
                 <td class="p-3">
                     {{ $index + 1 }}
                 </td>
 
-                <td class="p-3">
+                <td class="p-3 font-medium">
                     {{ $item->name }}
                 </td>
 

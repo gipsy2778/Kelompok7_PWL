@@ -3,24 +3,32 @@
 @section('content')
 
 @if(session('success'))
+
 <div id="notif"
      class="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
 
     <div class="bg-green-500 text-white px-8 py-5 rounded-xl shadow-xl text-lg">
+
         ✅ {{ session('success') }}
+
     </div>
 
 </div>
 
 <script>
+
 setTimeout(() => {
+
     document.getElementById('notif').remove();
+
 }, 2000);
+
 </script>
+
 @endif
 
 <h1 class="text-2xl font-bold mb-6">
-    Riwayat Transaksi
+    Riwayat Transaksi Saya
 </h1>
 
 <div class="bg-white rounded-xl shadow overflow-hidden">
@@ -59,7 +67,7 @@ setTimeout(() => {
 
             @forelse($riwayat as $index => $item)
 
-            <tr class="border-t">
+            <tr class="border-t hover:bg-gray-50">
 
                 <td class="p-3">
                     {{ $riwayat->firstItem() + $index }}
@@ -74,7 +82,7 @@ setTimeout(() => {
                 </td>
 
                 <td class="p-3 font-semibold text-green-600">
-                    Rp {{ number_format($item->total) }}
+                    Rp {{ number_format($item->total,0,',','.') }}
                 </td>
 
                 <td class="p-3">
@@ -112,7 +120,9 @@ setTimeout(() => {
 </div>
 
 <div class="mt-4">
+
     {{ $riwayat->links() }}
+
 </div>
 
 @endsection

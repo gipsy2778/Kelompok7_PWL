@@ -5,17 +5,26 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-
 class SupervisorController extends Controller
 {
+    // =========================
+    // DASHBOARD SUPERVISOR
+    // =========================
     public function dashboard()
     {
-        $jumlahTransaksi = DB::table('transaksi')->count();
+        $cabangId = Auth::user()->cabang_id;
 
-        $omzet = DB::table('transaksi')->sum('total');
+        $jumlahTransaksi = DB::table('transaksi')
+            ->where('cabang_id', $cabangId)
+            ->count();
+
+        $omzet = DB::table('transaksi')
+            ->where('cabang_id', $cabangId)
+            ->sum('total');
 
         $kasirAktif = DB::table('users')
             ->where('role', 'kasir')
+            ->where('cabang_id', $cabangId)
             ->count();
 
         return view(
@@ -28,8 +37,13 @@ class SupervisorController extends Controller
         );
     }
 
+    // =========================
+    // MONITORING TRANSAKSI
+    // =========================
     public function monitoringTransaksi()
     {
+        $cabangId = Auth::user()->cabang_id;
+
         $transaksi = DB::table('transaksi')
             ->join(
                 'users',
@@ -41,7 +55,11 @@ class SupervisorController extends Controller
                 'transaksi.*',
                 'users.name as nama_kasir'
             )
-            ->orderByDesc('tanggal')
+            ->where(
+                'transaksi.cabang_id',
+                $cabangId
+            )
+            ->orderByDesc('transaksi.tanggal')
             ->paginate(10);
 
         return view(
@@ -49,6 +67,10 @@ class SupervisorController extends Controller
             compact('transaksi')
         );
     }
+
+    // =========================
+    // DATA KASIR
+    // =========================
     public function kasir()
     {
         $kasir = DB::table('users')
@@ -57,6 +79,7 @@ class SupervisorController extends Controller
                 'cabang_id',
                 Auth::user()->cabang_id
             )
+            ->orderBy('name')
             ->get();
 
         return view(
@@ -65,6 +88,9 @@ class SupervisorController extends Controller
         );
     }
 
+    // =========================
+    // LAPORAN TRANSAKSI
+    // =========================
     public function laporan()
     {
         $laporan = DB::table('transaksi')
@@ -73,11 +99,13 @@ class SupervisorController extends Controller
                 Auth::user()->cabang_id
             )
             ->selectRaw(
-                'DATE(tanggal) as tanggal,
+                '
+                DATE(tanggal) as tanggal,
                 COUNT(*) as jumlah_transaksi,
-                SUM(total) as omzet'
+                SUM(total) as omzet
+                '
             )
-            ->groupBy('tanggal')
+            ->groupByRaw('DATE(tanggal)')
             ->orderByDesc('tanggal')
             ->get();
 

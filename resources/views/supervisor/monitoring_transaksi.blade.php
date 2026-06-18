@@ -2,9 +2,17 @@
 
 @section('content')
 
-<h1 class="text-2xl font-bold mb-6">
-    Monitoring Transaksi
-</h1>
+<div class="mb-6">
+
+    <h1 class="text-3xl font-bold text-gray-800">
+        Monitoring Transaksi
+    </h1>
+
+    <p class="text-gray-500 mt-1">
+        Daftar transaksi pada cabang Anda
+    </p>
+
+</div>
 
 <div class="bg-white rounded-xl shadow overflow-hidden">
 
@@ -14,15 +22,25 @@
 
             <tr>
 
-                <th class="p-3 text-left">No</th>
+                <th class="p-3 text-left">
+                    No
+                </th>
 
-                <th class="p-3 text-left">Kode</th>
+                <th class="p-3 text-left">
+                    Kode Transaksi
+                </th>
 
-                <th class="p-3 text-left">Tanggal</th>
+                <th class="p-3 text-left">
+                    Tanggal
+                </th>
 
-                <th class="p-3 text-left">Kasir</th>
+                <th class="p-3 text-left">
+                    Kasir
+                </th>
 
-                <th class="p-3 text-left">Total</th>
+                <th class="p-3 text-left">
+                    Total
+                </th>
 
             </tr>
 
@@ -32,13 +50,13 @@
 
             @forelse($transaksi as $index => $item)
 
-            <tr class="border-t">
+            <tr class="border-t hover:bg-gray-50">
 
                 <td class="p-3">
                     {{ $transaksi->firstItem() + $index }}
                 </td>
 
-                <td class="p-3">
+                <td class="p-3 font-medium">
                     {{ $item->kode_transaksi }}
                 </td>
 
@@ -51,7 +69,7 @@
                 </td>
 
                 <td class="p-3 font-semibold text-green-600">
-                    Rp {{ number_format($item->total) }}
+                    Rp {{ number_format($item->total,0,',','.') }}
                 </td>
 
             </tr>
@@ -61,7 +79,7 @@
             <tr>
 
                 <td colspan="5"
-                    class="text-center p-5 text-gray-500">
+                    class="text-center p-6 text-gray-500">
 
                     Belum ada transaksi
 

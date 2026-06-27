@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class GudangController extends Controller
 {
@@ -133,6 +134,154 @@ class GudangController extends Controller
 
         return view('gudang.barang_keluar', compact('produk'));
     }
+
+    public function simpanBarangMasuk(\Illuminate\Http\Request $request)
+{
+    DB::beginTransaction();
+
+    try {
+
+        $stok = DB::table('stok_cabang')
+            ->where('produk_id', $request->produk_id)
+            ->where('cabang_id', Auth::user()->cabang_id)
+            ->first();
+
+        if (!$stok) {
+
+            return back()->with(
+                'error',
+                'Data stok tidak ditemukan'
+            );
+        }
+
+        $stokSebelum = $stok->stok;
+
+        $stokSesudah = $stok->stok + $request->jumlah;
+
+        DB::table('stok_cabang')
+            ->where('id', $stok->id)
+            ->update([
+                'stok' => $stokSesudah,
+                'updated_at' => now()
+            ]);
+
+        DB::table('riwayat_stok')
+            ->insert([
+
+                'produk_id' => $request->produk_id,
+
+                'cabang_id' => Auth::user()->cabang_id,
+
+                'user_id' => Auth::id(),
+
+                'jenis' => 'masuk',
+
+                'jumlah' => $request->jumlah,
+
+                'stok_sebelum' => $stokSebelum,
+
+                'stok_sesudah' => $stokSesudah,
+
+                'created_at' => now(),
+
+                'updated_at' => now()
+            ]);
+
+        DB::commit();
+
+        return back()->with(
+            'success',
+            'Barang masuk berhasil disimpan'
+        );
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()->with(
+            'error',
+            $e->getMessage()
+        );
+    }
+}
+
+public function simpanBarangKeluar(\Illuminate\Http\Request $request)
+{
+    DB::beginTransaction();
+
+    try {
+
+        $stok = DB::table('stok_cabang')
+            ->where('produk_id', $request->produk_id)
+            ->where('cabang_id', Auth::user()->cabang_id)
+            ->first();
+
+        if (!$stok) {
+
+            return back()->with(
+                'error',
+                'Data stok tidak ditemukan'
+            );
+        }
+
+        if ($request->jumlah > $stok->stok) {
+
+            return back()->with(
+                'error',
+                'Stok tidak mencukupi'
+            );
+        }
+
+        $stokSebelum = $stok->stok;
+
+        $stokSesudah = $stok->stok - $request->jumlah;
+
+        DB::table('stok_cabang')
+            ->where('id', $stok->id)
+            ->update([
+                'stok' => $stokSesudah,
+                'updated_at' => now()
+            ]);
+
+        DB::table('riwayat_stok')
+            ->insert([
+
+                'produk_id' => $request->produk_id,
+
+                'cabang_id' => Auth::user()->cabang_id,
+
+                'user_id' => Auth::id(),
+
+                'jenis' => 'keluar',
+
+                'jumlah' => $request->jumlah,
+
+                'stok_sebelum' => $stokSebelum,
+
+                'stok_sesudah' => $stokSesudah,
+
+                'created_at' => now(),
+
+                'updated_at' => now()
+            ]);
+
+        DB::commit();
+
+        return back()->with(
+            'success',
+            'Barang keluar berhasil disimpan'
+        );
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()->with(
+            'error',
+            $e->getMessage()
+        );
+    }
+}
 
 
 

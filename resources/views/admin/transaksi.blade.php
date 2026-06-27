@@ -78,7 +78,7 @@
             <th class="p-2">No</th>
             <th class="p-2">Cabang</th>
             <th class="p-2">Jumlah Transaksi</th>
-            <th class="p-2">Total Pendapatan</th>
+            <th class="p-2">Total Omset</th>
             <th class="p-2">Transaksi Terakhir</th>
             <th class="p-2">Aksi</th>
         </tr>

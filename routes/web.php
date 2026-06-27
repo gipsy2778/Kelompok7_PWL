@@ -114,12 +114,18 @@ Route::middleware(['auth','role:gudang'])->group(function () {
 
     Route::get('/gudang/barang-masuk', [GudangController::class, 'barangMasuk']);
 
+    Route::post(
+        '/gudang/barang-masuk',
+        [GudangController::class, 'simpanBarangMasuk']
+    );
+
     Route::get('/gudang/barang-keluar', [GudangController::class, 'barangKeluar']);
+
+    Route::post(
+        '/gudang/barang-keluar',
+        [GudangController::class, 'simpanBarangKeluar']
+    );
 
     Route::get('/gudang/riwayat-stok', [GudangController::class, 'riwayatStok']);
 
-    Route::post(
-    '/gudang/barang-keluar',
-    [GudangController::class, 'simpanBarangKeluar']
-);
 });
